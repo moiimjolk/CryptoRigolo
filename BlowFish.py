@@ -1,6 +1,7 @@
 from Crypto.Cipher import Blowfish
 from Crypto.Util.Padding import pad, unpad
 import hashlib
+import FileHandler
 
 def encrypt(data, password, salt):
     """
@@ -46,3 +47,12 @@ def decrypt(data, password, salt):
         return original_data
     except ValueError as e:
         raise ValueError(f"Decryption failed: {str(e)}")
+
+#wrappers for the interface   
+
+
+def crypt_all(text, keyword, salt, target, function):
+    reader=FileHandler()
+    data=reader.read_file(text)
+    message=function(data, keyword, salt)
+    reader.save_file(message, target)

@@ -389,5 +389,5 @@ key = [["0x2b", "0x28", "0xab", "0x09"],
 
 
 #et ça ce sont les appels pour mes fichiers de test à moi
-crypt_all("test.txt", "vivelinfo", "test_crypte.txt", crypt)
-crypt_all("test_crypte.txt", "vivelinfo", "test_decrypte.txt", decrypt)
+#crypt_all("test.txt", "vivelinfo", "test_crypte.txt", crypt)
+#crypt_all("test_crypte.txt", "vivelinfo", "test_decrypte.txt", decrypt)

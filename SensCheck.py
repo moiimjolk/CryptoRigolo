@@ -26,7 +26,7 @@ question_deg = [
 
 sym_algos = {
     1: ["AES", "TwoFish", "ChaCha20"],
-    2: ["3DES", "BlowFish", "Salsa20"],
+    2: ["threeDES", "BlowFish", "Salsa20"],
     3: ["DES", "RC4"]
 }
 
