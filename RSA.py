@@ -65,6 +65,29 @@ def decrypt(cipher, private_key):
     message = ''.join([chr(pow(char, d, n)) for char in cipher])
     return message
 
+def crypt_all(operation, key, input_file, output_file):
+    if operation == encrypt:
+        with open(input_file, 'r') as f:
+            data = f.read()
+        
+        result = operation(data, key)
+        
+        with open(output_file, 'w') as out_f:
+            for num in result:
+                out_f.write(f"{num}\n")
+                
+    elif operation == decrypt:
+        with open(input_file, 'r') as f:
+            encrypted_data = [int(line.strip()) for line in f if line.strip()]
+        
+        result = operation(encrypted_data, key)
+        
+        with open(output_file, 'w') as out_f:
+            out_f.write(result)
+            
+    else:
+        raise ValueError("Operation must be the encrypt or decrypt function")
+
 #Comment ça devrait fonctionner... ;_;
 if __name__ == "__main__":
     public_key, private_key = generate_keys()
@@ -77,4 +100,6 @@ if __name__ == "__main__":
 
     decrypted = decrypt(encrypted, private_key)
     print("Decryp :", decrypted)
-
+    
+    #crypt_all(encrypt, public_key, "benoit.txt", "benoitout.txt")
+    #crypt_all(decrypt, private_key, "benoitout.txt", "benoitout.txt")
