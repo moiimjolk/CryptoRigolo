@@ -1,5 +1,6 @@
 from Crypto.Cipher import AES  # Note: PyCryptodome doesn't have native Twofish
 from Crypto.Util.Padding import pad, unpad
+import FileHandler
 import hashlib
 import os
 
@@ -7,7 +8,7 @@ import os
 # we're using AES-256 as a substitute for demonstration purposes.
 # In a production environment, you would use a proper Twofish implementation.
 
-def encrypt(data, password, salt):
+def crypt(data, password, salt):
     """
     Encrypt using "Twofish" (simulated with AES-256)
     """
@@ -50,3 +51,9 @@ def decrypt(data, password, salt):
         return original_data
     except ValueError as e:
         raise ValueError(f"Decryption failed: {str(e)}")
+    
+def crypt_all(text, keyword, salt, target, function):
+    reader=FileHandler()
+    data=reader.read_file(text)
+    message=function(data, keyword, salt)
+    reader.save_file(message, target)

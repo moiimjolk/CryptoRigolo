@@ -1,9 +1,6 @@
 from hashlib import blake2b
 from copy import deepcopy
 
-#je suis à moitié satisfaite de cette version, elle fonctionne de manière approximative 
-#il peut arriver que quelques caractères soient remplacés et que le texte soit légèrement tronqué
-#ces problèmes se manifestent normalement sur des entrées assez longues
 
 
 def organize(text):

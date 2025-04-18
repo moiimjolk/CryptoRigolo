@@ -1,5 +1,5 @@
 import importlib
-import threeDES, AES,TwoFish, ChaCha20, DES, BlowFish, Salsa20, DES, RC4, RSA, SHA, MD5
+import threeDES, AES,TwoFish, ChaCha20, DES, BlowFish, Salsa20, DES, RC4, RSA, SHA, MD5, BlowFish
 import checksum
 import SensCheck
 from tkinter import *
@@ -9,8 +9,8 @@ from tkinter import *
 #pour tous les (dé)cryptages, j'appelle crypt_all(chemin_source, clé, chemin_destination, fonction(=cryptage ou décryptage))
 #du coup j'ai aussi des wrappers crypt et decrypt
 
-crypto_methods=[AES]
-hashing_methods=[MD5]
+crypto_methods=[AES, DES, RC4, RSA, BlowFish, TwoFish, ChaCha20, Salsa20]
+hashing_methods=[MD5, SHA]
 root = Tk()
 
 
@@ -30,6 +30,7 @@ def encrypt():
     global key
     global module_var
     global salt
+    global key3
     root.destroy()
     root=Tk()
     module_var=StringVar()
@@ -45,22 +46,29 @@ def encrypt():
     key_label.pack()
     key = Entry(root)
     key.pack()
-    salt_label=Label(root, text="Sel (si nécéssaire)")
+    salt_label=Label(root, text="Sel/nonce/2e clé (si nécéssaire)")
     salt_label.pack()
     salt=Entry(root)
     salt.pack()
+    key3_label= Label(root, text="3e clé (si nécéssaire)")
+    key3_label.pack()
+    key3 = Entry(root)
+    key3.pack()
     button_lost=Button(root, text="Perdu ?", command=questions)
     button_lost.pack()
     for module in crypto_methods :
         radio_encrypt=Radiobutton(root, text=module.__name__, variable=module_var, value=module.__name__)
         radio_encrypt.pack()
-    for module in hashing_methods : 
-        radio_encrypt=Radiobutton(root, text=module.__name__, variable=module_var, value=module.__name__)
-        radio_encrypt.pack()
-    checksum_radio=Radiobutton(root, text="checksum", variable=module_var, value="checksum")
+    radio_MD5=Radiobutton(root, text="MD5", variable=module_var, value="MD5")
+    radio_MD5.pack()
+    radio_sha1=Radiobutton(root, text="SHA1", variable=module_var, value="SHA1")
+    radio_sha1.pack()
+    radio_sha256=Radiobutton(root, text="SHA256", variable=module_var, value="SHA256")
+    radio_sha256.pack()
+    radio_sha512=Radiobutton(root, text="SHA512", variable=module_var, value="SHA512")
+    radio_sha512.pack()
+    checksum_radio=Radiobutton(root, text="checksum", variable=module_var, value="Checksum")
     checksum_radio.pack()
-    blowfish_radio=Radiobutton(root, text="blowfish", variable=module_var, value="blowfish")
-    blowfish_radio.pack()
     button_encrypt=Button(root, text="Crypter", width=20, command=crypt_selection)
     button_encrypt.pack()
 
@@ -74,34 +82,46 @@ def crypt_selection():
     global key
     global module
     global salt
-    root.destroy()
-    root=Tk()
-    module=importlib.import_module(module_var)
-    if module_var=="checksum":
+    global key3
+    if  "SHA" in module_var.get():
+        module=SHA
+    else:
+        print(module_var.get())
+        module=importlib.import_module(module_var.get())
+    if module_var.get()=="Checksum":
         display_checksum()
-    if module_var=="blowfish":
-        just_to_handle_blowfish_cryptage()
-    if module in crypto_methods:
+    elif module_var.get()=="threeDES":
+        just_to_handle_3DS_cryptage()
+    elif "Fish" in module_var.get():
+        just_to_handle_fish_cryptage()
+    elif "20" in module_var.get():
+        just_to_handle_20_cryptage()
+    elif module in crypto_methods:
         crypt_wrapper()
     else:
-        display_hash()
+        display_hash(module_var.get())
 
 def crypt_wrapper():
     global src
     global target
     global key
     global module
+    print(len(key.get()))
     module.crypt_all(src.get(), key.get(), target.get(), module.crypt)
     home()
 
-def display_hash():
+def display_hash(algo):
     global root
     global src
     global module
     fic = src.get()
+    
+    if algo == "MD5":
+        hash = module.hashing(fic)
+    else:
+        hash=module.algo(fic)
     root.destroy()
     root=Tk()
-    hash = module.hashing(fic)
     print(hash)
     text = Label(root, text="Voici le hash généré : "+ hash)
     text.pack()
@@ -125,23 +145,65 @@ def display_checksum():
     button_return=Button(root, width=20, text="Accueil", command=home)
     button_return.pack()
 
-def just_to_handle_blowfish_cryptage():
+def just_to_handle_fish_cryptage():
+    global src
+    global key
+    global salt
+    global module
+    global target
+    module.crypt_all(src, key, salt, target, module.crypt)
+    home()
+
+
+def just_to_handle_fish_decryptage():
     global src
     global key
     global salt
     global target
-    BlowFish.crypt_all(src, key, salt, target, BlowFish.encrypt)
+    global module
+    module.crypt_all(src, key, salt, target, module.decrypt)
     home()
+
+def just_to_handle_3DS_cryptage():
+    global src
+    global key
+    global salt
+    global target
+    global key3
+    threeDES.crypt_all((threeDES.triple_des_encrypt_full, key, salt, key3, src, target))
+    home()
+
+def just_to_handle_3DS_decryptage():
+    global src
+    global key
+    global key2
+    global target
+    global key3
+    threeDES.crypt_all((threeDES.triple_des_decrypt_full, key, salt, key3, src, target))
+    home()
+
+def just_to_handle_20_cryptage():
+    global src
+    global key
+    global key2
+    global target
+    global module
+    module.crypt_all(key, key2, src, target)
+    home()
+    
 
 def decrypt():
     global root
     global src
     global target
     global key
+    global key2
+    global key3
     global module_var
-    module_var=StringVar()
+    
     root.destroy()
     root=Tk()
+    module_var=StringVar()
     src_label= Label(root, text="Chemin source")
     src_label.pack()
     src = Entry (root)
@@ -154,8 +216,14 @@ def decrypt():
     key_label.pack()
     key = Entry(root)
     key.pack()
-    button_lost=Button(root, text="Perdu ?", command=questions())
-    button_lost.pack()
+    key2_label= Label(root, text="2e clé (si nécéssaire)")
+    key2_label.pack()
+    key2 = Entry(root)
+    key2.pack()
+    key3_label= Label(root, text="3e clé (si nécéssaire)")
+    key3_label.pack()
+    key3 = Entry(root)
+    key3.pack()
     for module in crypto_methods:
         radio_decrypt=Radiobutton(root, text=module.__name__, variable=module_var, value=module.__name__)
         radio_decrypt.pack()
@@ -171,11 +239,11 @@ def questions():
     root=Tk()
     type_var=IntVar()
     deg_var=IntVar()
-    for i in range(3):
-        radio_type=Radiobutton(root, text=SensCheck.question_type[i], variable=type_var, value=i)
+    for i in range(1,4):
+        radio_type=Radiobutton(root, text=SensCheck.question_type[i-1], variable=type_var, value=i)
         radio_type.pack()
-    for i in range(3):
-        radio_deg=Radiobutton(root, text=SensCheck.question_deg[i], variable=deg_var, value=i)
+    for i in range(1,4):
+        radio_deg=Radiobutton(root, text=SensCheck.question_deg[i-1], variable=deg_var, value=i)
         radio_deg.pack()
     button_submit=Button(root, text="Trouver un algo", width=20, command=get_algorithm)
     button_submit.pack()
@@ -190,13 +258,21 @@ def get_algorithm():
     global key
     global salt
     global root
-    module_var=StringVar()
+    global key3 
+    recommended_algorithms=SensCheck.get_list_algo_suggestion(deg_var.get(), SensCheck.type_algo(type_var.get()))
     root.destroy()
     root=Tk()
-    recommended_algorithms=SensCheck.get_list_algo_suggestion(deg_var, SensCheck.type_algo(type_var))
+    module_var=StringVar()
     for algo in recommended_algorithms:
         radio_algo=Radiobutton(root, text=algo, variable=module_var, value=algo)
         radio_algo.pack()
+        if algo == "SHA":
+            radio_sha1=Radiobutton(root, text="SHA1", variable=module_var, value="SHA1")
+            radio_sha1.pack()
+            radio_sha256=Radiobutton(root, text="SHA256", variable=module_var, value="SHA256")
+            radio_sha256.pack()
+            radio_sha512=Radiobutton(root, text="SHA512", variable=module_var, value="SHA512")
+            radio_sha512.pack()
     src_label= Label(root, text="Chemin source")
     src_label.pack()
     src = Entry (root)
@@ -222,8 +298,14 @@ def decrypt_wrapper():
     global src
     global target
     global key
+    global key2
+    global key3
     global module_var
-    module=importlib.import_module(module_var)
+    module=importlib.import_module(module_var.get())
+    if "Fish" in module_var.get():
+        just_to_handle_fish_decryptage()
+    elif "20" in module_var.get():
+        just_to_handle_20_cryptage()
     module.crypt_all(src.get(), key.get(), target.get(), module.decrypt)
     home()    
 home()

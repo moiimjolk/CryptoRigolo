@@ -2,8 +2,6 @@ from copy import deepcopy
 from math import *
 
 
-#fonctionnel mais faux 
-#au moins ça m'a l'air de produire une signature unique T_T
 
 
 

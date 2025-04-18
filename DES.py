@@ -231,7 +231,7 @@ def unpad_data(data):
     
     return data[:-pad_length]
 
-def des_encrypt_full(plaintext, key):
+def crypt(plaintext, key):
     padded_data = pad_data(plaintext)
     
     result = ""
@@ -244,7 +244,7 @@ def des_encrypt_full(plaintext, key):
     
     return result
 
-def des_decrypt_full(ciphertext, key):
+def decrypt(ciphertext, key):
     result = b""
     for i in range(0, len(ciphertext), 64):
         block = ciphertext[i:i+64]
@@ -258,21 +258,21 @@ def des_decrypt_full(ciphertext, key):
     except:
         return unpadded_data
 
-def crypt_all(operation, key, input_file, output_file):
-    if operation == des_encrypt_full:
+def crypt_all(input_file, key, output_file, operation):
+    if operation == crypt:
         try:
             with open(input_file, 'r') as f:
                 data = f.read()
         except UnicodeDecodeError:
             with open(input_file, 'rb') as f:
                 data = f.read()
-        
+                
         result = operation(data, key)
         
         with open(output_file, 'w') as f:
             f.write(result)
     
-    elif operation == des_decrypt_full:
+    elif operation == decrypt:
         with open(input_file, 'r') as f:
             cipher_bits = f.read()
         
@@ -294,6 +294,6 @@ if __name__ == "__main__":
 
     decrypted = des_decrypt(cipher, key)
     print("Déchiffré   :", decrypted)
-    
-    #crypt_all(des_encrypt_full, key, "benoit.txt", "benoitout.txt")
-    #crypt_all(des_decrypt_full, key, "benoitout.txt", "benoitout.txt")
+
+    crypt_all("benoit.txt", key, "benoitout.txt", crypt)
+    crypt_all("benoit.txt", key, "benoitout.txt", decrypt)

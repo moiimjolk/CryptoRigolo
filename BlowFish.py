@@ -3,7 +3,7 @@ from Crypto.Util.Padding import pad, unpad
 import hashlib
 import FileHandler
 
-def encrypt(data, password, salt):
+def crypt(data, password, salt):
     """
     Encrypt using Blowfish algorithm
     Blowfish uses variable length keys, we'll use up to 56 bytes

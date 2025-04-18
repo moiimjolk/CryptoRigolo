@@ -51,6 +51,6 @@ def get_list_algo_suggestion(deg, type):
 
 # test
 
-type = type_algo(1)
-deg = 1
-print(get_list_algo_suggestion(deg, type))
+#type = type_algo(1)
+#deg = 1
+#print(get_list_algo_suggestion(deg, type))

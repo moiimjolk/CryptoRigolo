@@ -55,7 +55,7 @@ def generate_keys():
     d = modinv(e, phi)
     return (e, n), (d, n)
 
-def encrypt(message, public_key):
+def crypt(message, public_key):
     e, n = public_key
     cipher = [pow(ord(char), e, n) for char in message]
     return cipher
@@ -65,8 +65,8 @@ def decrypt(cipher, private_key):
     message = ''.join([chr(pow(char, d, n)) for char in cipher])
     return message
 
-def crypt_all(operation, key, input_file, output_file):
-    if operation == encrypt:
+def crypt_all(input_file, key, output_file, operation):
+    if operation == crypt:
         with open(input_file, 'r') as f:
             data = f.read()
         
@@ -88,18 +88,18 @@ def crypt_all(operation, key, input_file, output_file):
     else:
         raise ValueError("Operation must be the encrypt or decrypt function")
 
-#Comment ça devrait fonctionner... ;_;
-if __name__ == "__main__":
-    public_key, private_key = generate_keys()
-    print("Clé pub :", public_key)
-    print("Clé pri :", private_key)
-
-    message = "Benoit mon homme"
-    encrypted = encrypt(message, public_key)
-    print("Encryp :", encrypted)
-
-    decrypted = decrypt(encrypted, private_key)
-    print("Decryp :", decrypted)
-    
-    #crypt_all(encrypt, public_key, "benoit.txt", "benoitout.txt")
-    #crypt_all(decrypt, private_key, "benoitout.txt", "benoitout.txt")
+##Comment ça devrait fonctionner... ;_;
+#if __name__ == "__main__":
+#    public_key, private_key = generate_keys()
+#    print("Clé pub :", public_key)
+#    print("Clé pri :", private_key)
+#
+#    message = "Benoit mon homme"
+#    encrypted = crypt(message, public_key)
+#    print("Encryp :", encrypted)
+#
+#    decrypted = decrypt(encrypted, private_key)
+#    print("Decryp :", decrypted)
+#    
+#    crypt_all("benoit.txt", public_key, "benoitout.txt", crypt)
+#    crypt_all("benoit.txt", private_key, "benoitout.txt", crypt)
