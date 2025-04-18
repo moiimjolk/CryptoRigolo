@@ -1,5 +1,5 @@
 import unittest
-from CryptoRigolo.TwoFish import encrypt, decrypt
+from TwoFish import crypt, decrypt
 import os
 
 class TestTwoFish(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestTwoFish(unittest.TestCase):
 
     def test_encrypt_decrypt(self):
       
-        encrypted_data = encrypt(self.data, self.password, self.salt)
+        encrypted_data = crypt(self.data, self.password, self.salt)
        
         decrypted_data = decrypt(encrypted_data, self.password, self.salt)
         
@@ -19,7 +19,7 @@ class TestTwoFish(unittest.TestCase):
 
     def test_decrypt_with_wrong_password(self):
        
-        encrypted_data = encrypt(self.data, self.password, self.salt)
+        encrypted_data = crypt(self.data, self.password, self.salt)
         
         wrong_password = "mauvaismotdepasse"
         with self.assertRaises(ValueError):

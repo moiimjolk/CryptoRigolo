@@ -1,7 +1,8 @@
 from Crypto.Cipher import Blowfish
 from Crypto.Util.Padding import pad, unpad
+from fileHandler import *
 import hashlib
-import FileHandler
+import fileHandler
 
 def crypt(data, password, salt):
     """
@@ -54,5 +55,5 @@ def decrypt(data, password, salt):
 def crypt_all(text, keyword, salt, target, function):
     reader=FileHandler()
     data=reader.read_file(text)
-    message=function(data, keyword, salt)
+    message=function(data, keyword, bytes(salt,  encoding='UTF-8'))
     reader.save_file(message, target)

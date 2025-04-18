@@ -85,6 +85,7 @@ def crypt_selection():
     global key3
     if  "SHA" in module_var.get():
         module=SHA
+
     else:
         print(module_var.get())
         module=importlib.import_module(module_var.get())
@@ -151,7 +152,7 @@ def just_to_handle_fish_cryptage():
     global salt
     global module
     global target
-    module.crypt_all(src, key, salt, target, module.crypt)
+    module.crypt_all(src.get(), key.get(), salt.get(), target.get(), module.crypt)
     home()
 
 
@@ -161,7 +162,7 @@ def just_to_handle_fish_decryptage():
     global salt
     global target
     global module
-    module.crypt_all(src, key, salt, target, module.decrypt)
+    module.crypt_all(src.get(), key.get(), salt.get(), target.get(), module.decrypt)
     home()
 
 def just_to_handle_3DS_cryptage():
@@ -170,25 +171,25 @@ def just_to_handle_3DS_cryptage():
     global salt
     global target
     global key3
-    threeDES.crypt_all((threeDES.triple_des_encrypt_full, key, salt, key3, src, target))
+    threeDES.crypt_all((threeDES.triple_des_encrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get()))
     home()
 
 def just_to_handle_3DS_decryptage():
     global src
     global key
-    global key2
+    global  salt
     global target
     global key3
-    threeDES.crypt_all((threeDES.triple_des_decrypt_full, key, salt, key3, src, target))
+    threeDES.crypt_all((threeDES.triple_des_decrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get()))
     home()
 
 def just_to_handle_20_cryptage():
     global src
     global key
-    global key2
+    global salt
     global target
     global module
-    module.crypt_all(key, key2, src, target)
+    module.crypt_all(key.get(), salt.get(), src.get(), target.get())
     home()
     
 
@@ -197,7 +198,7 @@ def decrypt():
     global src
     global target
     global key
-    global key2
+    global salt
     global key3
     global module_var
     
@@ -216,10 +217,10 @@ def decrypt():
     key_label.pack()
     key = Entry(root)
     key.pack()
-    key2_label= Label(root, text="2e clé (si nécéssaire)")
-    key2_label.pack()
-    key2 = Entry(root)
-    key2.pack()
+    salt_label= Label(root, text="2e clé (si nécéssaire)")
+    salt_label.pack()
+    salt = Entry(root)
+    salt.pack()
     key3_label= Label(root, text="3e clé (si nécéssaire)")
     key3_label.pack()
     key3 = Entry(root)
@@ -298,7 +299,7 @@ def decrypt_wrapper():
     global src
     global target
     global key
-    global key2
+    global salt
     global key3
     global module_var
     module=importlib.import_module(module_var.get())

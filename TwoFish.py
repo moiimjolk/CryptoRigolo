@@ -1,6 +1,6 @@
 from Crypto.Cipher import AES  # Note: PyCryptodome doesn't have native Twofish
 from Crypto.Util.Padding import pad, unpad
-import FileHandler
+from fileHandler import *
 import hashlib
 import os
 
@@ -55,5 +55,5 @@ def decrypt(data, password, salt):
 def crypt_all(text, keyword, salt, target, function):
     reader=FileHandler()
     data=reader.read_file(text)
-    message=function(data, keyword, salt)
+    message=function(data, keyword, bytes(salt, encoding='UTF-8'))
     reader.save_file(message, target)
