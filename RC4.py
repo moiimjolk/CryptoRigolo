@@ -26,6 +26,17 @@ def rc4_encrypt_decrypt(key, data):
     
     return bytes([byte ^ next(keystream) for byte in data])
 
+def crypt_all(key, input_file, output_file):
+    with open(input_file, 'rb') as f:
+        data = f.read()
+    
+    result = rc4_encrypt_decrypt(key, data)
+    
+    with open(output_file, 'wb') as f:
+        f.write(result)
+
+
+
 # test comme d'hab
 key = b"Benoit"
 plaintext = b"Mon amour"
@@ -36,3 +47,6 @@ print("Encryp :", ciphertext)
 decrypted = rc4_encrypt_decrypt(key, ciphertext)
 print("Decryp :", decrypted.decode())
 
+
+crypt_all(key, "benoit.txt", "benoitout.txt")
+crypt_all(key, "benoitout.txt", "benoitout.txt")

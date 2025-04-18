@@ -53,6 +53,15 @@ def salsa20_encrypt_decrypt(key, nonce, data):
     keystream = salsa20_block(key, nonce)
     return bytes([data[i] ^ keystream[i] for i in range(len(data))])
 
+def crypt_all(key, nonce, input_file, output_file):
+    with open(input_file, 'rb') as f:
+        data = f.read()
+    
+    result = salsa20_encrypt_decrypt(key, nonce, data)
+    
+    with open(output_file, 'wb') as f:
+        f.write(result)
+
 # test 
 key = bytes([0x00] * 32)  # 256 bits
 nonce = bytes([0x00] * 8)  # 64 bits
@@ -64,3 +73,6 @@ print("Encryp :", ciphertext)
 
 decrypted = salsa20_encrypt_decrypt(key, nonce, ciphertext)
 print("Decryp :", decrypted.decode('utf-8'))
+
+#crypt_all(key, nonce, "benoit.txt", "benoitout.txt")
+#crypt_all(key, nonce, "benoitout.txt", "benoitout.txt")

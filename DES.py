@@ -209,6 +209,81 @@ def des_decrypt(cipher_bits, key8):
 
 # pour montrer comment il fonctionne, les inputs doivent respecter une taille
 # oui les inputs doivent être parfaitement 8 octets, ou 64 bits pour être précis (8 caractères)
+# si on utilise les algo de base, voici une version amélioré pour n'importe quel taille :
+
+def pad_data(data):
+    pad_length = 8 - (len(data) % 8)
+    padding = bytes([pad_length]) * pad_length
+    return data.encode('latin-1') + padding if isinstance(data, str) else data + padding
+
+def unpad_data(data):
+    if not data:
+        return data
+    
+    pad_length = data[-1]
+    
+    if pad_length > 8:
+        return data
+    
+    for i in range(1, pad_length + 1):
+        if data[-i] != pad_length:
+            return data
+    
+    return data[:-pad_length]
+
+def des_encrypt_full(plaintext, key):
+    padded_data = pad_data(plaintext)
+    
+    result = ""
+    for i in range(0, len(padded_data), 8):
+        block = padded_data[i:i+8]
+        if isinstance(block, bytes):
+            block = block.decode('latin-1')
+        encrypted_block = des_encrypt(block, key)
+        result += encrypted_block
+    
+    return result
+
+def des_decrypt_full(ciphertext, key):
+    result = b""
+    for i in range(0, len(ciphertext), 64):
+        block = ciphertext[i:i+64]
+        decrypted_block = des_decrypt(block, key)
+        result += decrypted_block.encode('latin-1')
+    
+    unpadded_data = unpad_data(result)
+    
+    try:
+        return unpadded_data.decode('latin-1')
+    except:
+        return unpadded_data
+
+def crypt_all(operation, key, input_file, output_file):
+    if operation == des_encrypt_full:
+        try:
+            with open(input_file, 'r') as f:
+                data = f.read()
+        except UnicodeDecodeError:
+            with open(input_file, 'rb') as f:
+                data = f.read()
+        
+        result = operation(data, key)
+        
+        with open(output_file, 'w') as f:
+            f.write(result)
+    
+    elif operation == des_decrypt_full:
+        with open(input_file, 'r') as f:
+            cipher_bits = f.read()
+        
+        result = operation(cipher_bits, key)
+        
+        if isinstance(result, str):
+            with open(output_file, 'w') as f:
+                f.write(result)
+        else:
+            with open(output_file, 'wb') as f:
+                f.write(result)
 
 if __name__ == "__main__":
     plaintext = "12345678"
@@ -219,4 +294,6 @@ if __name__ == "__main__":
 
     decrypted = des_decrypt(cipher, key)
     print("Déchiffré   :", decrypted)
-
+    
+    #crypt_all(des_encrypt_full, key, "benoit.txt", "benoitout.txt")
+    #crypt_all(des_decrypt_full, key, "benoitout.txt", "benoitout.txt")
