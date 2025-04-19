@@ -84,7 +84,6 @@ def crypt_selection():
     if  "SHA" in module_var.get():
         module=SHA
     else:
-        print(module_var.get())
         module=importlib.import_module(module_var.get())
     if module_var.get()=="Checksum":
         display_checksum()
@@ -106,7 +105,6 @@ def crypt_wrapper():
     global target
     global key
     global module
-    print(len(key.get()))
     module.crypt_all(src.get(), key.get(), target.get(), module.crypt)
     home()
 
