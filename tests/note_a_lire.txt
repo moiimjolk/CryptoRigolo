@@ -1,0 +1,1 @@
+Les fichiers sont à mettre dans le module CryptoRigolo si on veut exécuter les tests
