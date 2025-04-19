@@ -18,7 +18,7 @@ def home():
     root=Tk()
     button_encrypt=Button(root, text="Encrypter", width=20, command=encrypt)
     button_encrypt.pack()
-    button_decrypt=Button(root, text="Décrypter un fichier", width=20, command=decrypt)
+    button_decrypt=Button(root, text="Décrypter", width=20, command=decrypt)
     button_decrypt.pack()
 
 def encrypt():
@@ -54,6 +54,13 @@ def encrypt():
     key3.pack()
     button_lost=Button(root, text="Perdu ?", command=questions)
     button_lost.pack()
+    explainations = Label(root, text="La plupart des algos nécéssitent une clé seulement\n" \
+    "Pour les hashs pas besoin de clé\n" \
+    "TwoFish et BlowFish nécéssitent un salt, un nombre en binaire\n" \
+    "ChaCha20 et Salsa20 nécéssitent 2 clés\n" \
+    "3DES nécéssite 3 clés\n" \
+    "RSA fournit ses clés au cryptage\n")
+    explainations.pack()
     for module in crypto_methods :
         radio_encrypt=Radiobutton(root, text=module.__name__, variable=module_var, value=module.__name__)
         radio_encrypt.pack()
@@ -257,6 +264,11 @@ def decrypt():
     key3_label.pack()
     key3 = Entry(root)
     key3.pack()
+    explainations = Label(root, text="La plupart des algos nécéssitent une clé seulement\n" \
+    "TwoFish et BlowFish nécéssitent un salt, un nombre en binaire\n" \
+    "ChaCha20 et Salsa20 nécéssitent 2 clés\n" \
+    "3DES nécéssite 3 clés\n" )
+    explainations.pack()
     for module in crypto_methods:
         radio_decrypt=Radiobutton(root, text=module.__name__, variable=module_var, value=module.__name__)
         radio_decrypt.pack()
