@@ -80,7 +80,16 @@ def crypt_all(input_file, public_key, private_key, output_file, operation):
                 out_f.write(f"{num}\n")
                 
     elif operation == decrypt:
-        private_key=tuple(private_key)
+        buffer=""
+        value=0
+        for carac in private_key:
+            if carac==",":
+                value=int(buffer)
+                buffer=""
+            elif carac==")":
+                private_key=(value, int(buffer))
+            elif carac!="(":
+                buffer+=carac
         with open(input_file, 'r') as f:
             encrypted_data = [int(line.strip()) for line in f if line.strip()]
         
@@ -92,4 +101,6 @@ def crypt_all(input_file, public_key, private_key, output_file, operation):
           
     else:
         raise ValueError("Operation must be the encrypt or decrypt function")
+    
+    return public_key, private_key
 

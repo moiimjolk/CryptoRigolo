@@ -1,7 +1,5 @@
 
 
-#alors là je veux pas me casser la tête à implémenter des versions compliquées :>
-
 def get_sum(text):
     sum=0
     src = open(text, "r", encoding='utf-8')

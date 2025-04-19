@@ -29,6 +29,9 @@ def processing_input(text):
         else:
             bits+="0"
         length+=1
+    while length%512 !=0:
+        bits+="0"
+        length+=1
     return bits
 
 def append_length(length, bits):
@@ -54,7 +57,9 @@ def cut_in_blocks(bits):
             current_block=""
         current_block+= number
         bits_counter+=1
+    blocks.append(current_block)
     return blocks
+
 
 def cut_in_very_small_blocks(block):
     blocks=[]
@@ -76,16 +81,17 @@ def leftrotate(number, number_of_bits):
     string_to_tab=[]
     res=""
     for bit in string_binary_number:
-        string_to_tab.append(bit)
+        if bit == '1' or bit=="0":
+            string_to_tab.append(bit)
     for i in range(number_of_bits):
-        string_to_tab[len(string_to_tab)-1]=string_to_tab.pop(0)
+        string_to_tab.append(string_to_tab.pop(0))
     for bit in string_to_tab:
-        res+= str(bit)
+            res+= str(bit)
     return int(res, base=2)
 
 def computing(blocks, a, b, c, d):
     """Needs to use 32-bits blocks in a big 512-bits one"""
-    
+    max=2**32
     for i in range(64):
         if(i<=15 and i>=0):
             f = (b& c) | ((~b) & d)
@@ -96,7 +102,7 @@ def computing(blocks, a, b, c, d):
         elif(i<=47 and i>=32):
             f = b ^ c ^ d
             g = (3*i + 5)% 16
-        elif(i<=48 and i<=63):
+        else:
             f=c ^(b| (~d))
             g = (7*i)%16
         temp=d
@@ -105,7 +111,7 @@ def computing(blocks, a, b, c, d):
         b=leftrotate((a+f+k[i]+int(blocks[g], base=2)), r[i]) +b
 
         a=temp
-    return a, b, c, d
+    return a%max, b%max, c%max, d%max
     
 def iterating(blocks):
     a, b, c, d = producing_variables()

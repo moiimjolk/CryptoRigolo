@@ -1,6 +1,6 @@
 import importlib
 import threeDES, AES,TwoFish, ChaCha20, DES, BlowFish, Salsa20, DES, RC4, RSA, SHA, MD5, BlowFish
-import checksum
+import Checksum
 import SensCheck
 from tkinter import *
 
@@ -143,7 +143,7 @@ def display_checksum():
     fic_target= target.get()
     root.destroy()
     root=Tk()
-    if checksum.checksum(fic_src, fic_target):
+    if Checksum.checksum(fic_src, fic_target):
         text = Label(root, text="Le checksum s'est bien passé !")
         text.pack()
     else:
