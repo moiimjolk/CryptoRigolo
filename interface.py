@@ -4,12 +4,10 @@ import checksum
 import SensCheck
 from tkinter import *
 
-#à tester dès que possible
-#ne marche pas pour l'instant, d'abord il faut bien régler FileHandler
-#pour tous les (dé)cryptages, j'appelle crypt_all(chemin_source, clé, chemin_destination, fonction(=cryptage ou décryptage))
-#du coup j'ai aussi des wrappers crypt et decrypt
+#peut retourner des erreurs dans le terminal alors que le programme est effectivement exécuté comme il faut au décryptage
+#ainsi le code est tout de même décrypté
 
-crypto_methods=[AES, DES, RC4, RSA, BlowFish, TwoFish, ChaCha20, Salsa20]
+crypto_methods=[AES, DES, RC4, RSA, BlowFish, TwoFish, ChaCha20, Salsa20, threeDES]
 hashing_methods=[MD5, SHA]
 root = Tk()
 
@@ -85,7 +83,6 @@ def crypt_selection():
     global key3
     if  "SHA" in module_var.get():
         module=SHA
-
     else:
         print(module_var.get())
         module=importlib.import_module(module_var.get())
@@ -97,6 +94,8 @@ def crypt_selection():
         just_to_handle_fish_cryptage()
     elif "20" in module_var.get():
         just_to_handle_20_cryptage()
+    elif "RSA" == module_var.get():
+        display_for_RSA()
     elif module in crypto_methods:
         crypt_wrapper()
     else:
@@ -116,11 +115,18 @@ def display_hash(algo):
     global src
     global module
     fic = src.get()
-    
+    reader= open(fic,"r")
     if algo == "MD5":
         hash = module.hashing(fic)
+    
+    elif algo == "SHA1":
+        hash=module.sha1_hash(reader.read())
+
+    elif algo == "SHA256":
+        hash=module.sha256_hash(reader.read())
+
     else:
-        hash=module.algo(fic)
+        hash=module.sha512_hash(reader.read())
     root.destroy()
     root=Tk()
     print(hash)
@@ -145,6 +151,33 @@ def display_checksum():
          text.pack()
     button_return=Button(root, width=20, text="Accueil", command=home)
     button_return.pack()
+
+
+def display_for_RSA():
+    global root
+    global src
+    global target
+    public_key, private_key= RSA.crypt_all(src.get(),"", "", target.get(), RSA.crypt)
+    root.destroy()
+    root=Tk()
+    public_key_label=Label(root, text="Votre clé public est dans le fichier cle_publique ")
+    public_key_label.pack()
+    fic_pub=open("cle_publique.txt","w")
+    fic_priv=open("cle_privee.txt", "w")
+    fic_pub.write(str(public_key))
+    fic_priv.write(str(private_key))
+    fic_priv.close()
+    fic_pub.close()
+    private_key_label=Label(root, text="Votre clé privée est dans le fichier cle_privee ")
+    private_key_label.pack()
+    button_return=Button(root, width=20, text="Accueil", command=home)
+    button_return.pack()
+
+def just_to_handle_RSA():
+    global src
+    global target
+    global key
+    RSA.crypt_all(src.get(), "", key.get(), target.get(), RSA.decrypt)
 
 def just_to_handle_fish_cryptage():
     global src
@@ -171,7 +204,7 @@ def just_to_handle_3DS_cryptage():
     global salt
     global target
     global key3
-    threeDES.crypt_all((threeDES.triple_des_encrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get()))
+    threeDES.crypt_all(threeDES.triple_des_encrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get())
     home()
 
 def just_to_handle_3DS_decryptage():
@@ -180,7 +213,7 @@ def just_to_handle_3DS_decryptage():
     global  salt
     global target
     global key3
-    threeDES.crypt_all((threeDES.triple_des_decrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get()))
+    threeDES.crypt_all(threeDES.triple_des_decrypt_full, key.get(), salt.get(), key3.get(), src.get(), target.get())
     home()
 
 def just_to_handle_20_cryptage():
@@ -195,15 +228,16 @@ def just_to_handle_20_cryptage():
 
 def decrypt():
     global root
+    
+    root.destroy()
+    root=Tk()
+    
     global src
     global target
     global key
     global salt
     global key3
     global module_var
-    
-    root.destroy()
-    root=Tk()
     module_var=StringVar()
     src_label= Label(root, text="Chemin source")
     src_label.pack()
@@ -307,7 +341,12 @@ def decrypt_wrapper():
         just_to_handle_fish_decryptage()
     elif "20" in module_var.get():
         just_to_handle_20_cryptage()
-    module.crypt_all(src.get(), key.get(), target.get(), module.decrypt)
+    elif module_var.get()=="threeDES":
+        just_to_handle_3DS_decryptage()
+    elif module_var.get() == "RSA":
+        just_to_handle_RSA()
+    else:
+        module.crypt_all(src.get(), key.get(), target.get(), module.decrypt)
     home()    
 home()
 root.mainloop()

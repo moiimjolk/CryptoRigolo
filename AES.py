@@ -227,16 +227,16 @@ def inv_shift_rows(block):
         new_block.append(current_row)
     return deepcopy(new_block)
 
-def multiply(x, y): #to define multiplication modulo a GF polynom 
+def multiply(x, y): #to define multiplication modulo a GF polynom
     result = 0
-    for i in range(y):
-        if y & 1: 
-            result ^= x 
-        carry = y & 0x80  
-        x <<= 1  
+    for i in range(8):
+        if y & 1:
+            result ^= x
+        carry = x & 0x80
+        x = (x << 1) & 0xff
         if carry:
-            y ^= 0x1b  
-        x >>= 1
+            x ^= 0x1b
+        y >>= 1
     return result
 
 

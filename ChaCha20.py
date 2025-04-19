@@ -54,6 +54,8 @@ def chacha20_encrypt_decrypt(key, nonce, data):
     return bytes([data[i] ^ keystream[i] for i in range(len(data))])
 
 def crypt_all(key, nonce, input_file, output_file):
+    key=bytes(key, encoding="utf-8")
+    nonce=bytes(nonce,encoding="utf-8")
     with open(input_file, 'rb') as f:
         data = f.read()
     

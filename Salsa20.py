@@ -50,6 +50,8 @@ def salsa20_round(state):
     return state
 
 def salsa20_encrypt_decrypt(key, nonce, data):
+    key=bytes(key, encoding="utf-8")
+    nonce=bytes(nonce, encoding="utf-8")
     keystream = salsa20_block(key, nonce)
     return bytes([data[i] ^ keystream[i] for i in range(len(data))])
 
