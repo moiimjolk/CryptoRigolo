@@ -89,17 +89,3 @@ def crypt_all(input_file, key, output_file, operation):
     else:
         raise ValueError("Operation must be the encrypt or decrypt function")
 
-#Comment ça devrait fonctionner... ;_;
-#public_key, private_key = generate_keys()
-#print("Clé pub :", public_key)
-#print("Clé pri :", private_key)
-#
-#message = "Benoit mon homme"
-#encrypted = crypt(message, public_key)
-#print("Encryp :", encrypted)
-#
-#decrypted = decrypt(encrypted, private_key)
-#print("Decryp :", decrypted)
-#
-#crypt_all("benoit.txt", public_key, "benoit.txt", crypt)
-#crypt_all("benoitout.txt", private_key, "benoitout.txt", crypt)

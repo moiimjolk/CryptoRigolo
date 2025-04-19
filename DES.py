@@ -287,14 +287,3 @@ def crypt_all(input_file, key, output_file, operation):
             with open(output_file, 'wb') as f:
                 f.write(result)
 
-plaintext = "et le text"
-key = "si je m amuse a modifier la cle"
-cipher = des_encrypt(plaintext, key)
-print("Texte clair :", plaintext)
-print("Chiffré     :", cipher)
-
-decrypted = des_decrypt(cipher, key)
-print("Déchiffré   :", decrypted)
-
-crypt_all("test.txt", "ben", "test_crypte.txt", crypt)
-crypt_all("test_crypte.txt", "ben", "test_decrypte.txt", decrypt)
